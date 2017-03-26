@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Websockets test</title>
+    <th:block th:include="fragments/headerinc :: head"></th:block>
+</head>
+<body class="hold-transition skin-black-light layout-top-nav">
+<div class="wrapper">
+    <th:block th:include="fragments/header :: header"></th:block>
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Chat <small>[Connected to host <span th:text="${hostname}">unknown</span>]</small>
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-primary direct-chat direct-chat-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Messages</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <!-- Conversations are loaded here -->
+                            <div id="chat-messages" class="direct-chat-messages">
+                            </div><!--/.direct-chat-messages-->
+
+                            <form>
+                                <div class="input-group">
+                                    <input type="text" id="chat-message" name="message" placeholder="Type Message ..." class="form-control" />
+                                    <span class="input-group-btn">
+                                        <button id="chat-send" class="btn btn-primary btn-flat" type="submit">Send</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div><!-- /.box-footer-->
+                    </div><!--/.direct-chat -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <th:block th:include="fragments/footer :: footer"></th:block>
+</div>
+<!-- ./wrapper -->
+
+
+<!-- jQuery 2.2.3 -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/jQuery/jquery-2.2.3.min.js}"></script>
+<!-- Bootstrap 3.3.6 -->
+<script th:src="@{/AdminLTE-2.3.6/bootstrap/js/bootstrap.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/AdminLTE-2.3.6/dist/js/app.min.js}"></script>
+<!-- iCheck 1.0.1 -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/iCheck/icheck.min.js}"></script>
+<!-- date-range-picker -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/daterangepicker/moment.min.js}"></script>
+<script th:src="@{/AdminLTE-2.3.6/plugins/daterangepicker/daterangepicker.js}"></script>
+<!-- bootstrap datepicker -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<!-- bootstrap color picker -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/colorpicker/bootstrap-colorpicker.min.js}"></script>
+<!-- bootstrap time picker -->
+<script th:src="@{/AdminLTE-2.3.6/plugins/timepicker/bootstrap-timepicker.min.js}"></script>
+<!-- websockets -->
+<script th:src="@{/js/sockjs-1.1.2.js}"></script>
+<script th:src="@{/js/stomp-websocket-2.3.3-1.js}"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+    $(function() {
+        console.log( "ready!" );
+        connect();
+    });
+
+    var stompClient = null;
+
+    var user = [[${user}]];
+
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/chat.message.*', function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+            //send dummy message
+            $("#chat-message").val("Hello, let's chat about using Docker Flow Proxy :-)");
+            sendMessage();
+        });
+    }
+
+    function setConnected(connected) {
+        console.log(connected);
+    }
+
+    function sendMessage() {
+        stompClient.send("/app/chat.message." + user, {}, JSON.stringify({'message': $("#chat-message").val()}));
+        $("#chat-message").val('');
+    }
+
+    function showMessage(message) {
+        var alignment = "";
+        var profilePhoto = "/AdminLTE-2.3.6/dist/img/avatar04.png";
+        if(user == "Dirk") {
+            profilePhoto = "/AdminLTE-2.3.6/dist/img/avatar5.png";
+        }
+        if(user !== message.userId) {
+            alignment = "right";
+            profilePhoto = "/AdminLTE-2.3.6/dist/img/avatar04.png";
+            if(message.userId == "Dirk") {
+                profilePhoto = "/AdminLTE-2.3.6/dist/img/avatar5.png";
+            }
+        }
+
+        $("#chat-messages").append("" +
+            "<div class='direct-chat-msg " + alignment + "'>" +
+            "<div class='direct-chat-info clearfix'>" +
+            "<span class='direct-chat-name pull-left'>" + message.fullName + "</span>" +
+            "<span class='direct-chat-name pull-left'>&nbsp;</span>" +
+            "<span class='direct-chat-timestamp pull-left'><small>[Routed by host " + message.hostname + "]</small></span>" +
+            "<span class='direct-chat-timestamp pull-right'>" + new Date(message.time) + "</span>" +
+            "</div><!-- /.direct-chat-info -->" +
+            "<img class='direct-chat-img' alt='message user image' src='" + profilePhoto + "'><!-- /.direct-chat-img -->" +
+            "<div class='direct-chat-text'>" + message.message + "</div><!-- /.direct-chat-text -->" +
+            "</div>"
+        );
+        $("#chat-messages").animate({"scrollTop": $("#chat-messages")[0].scrollHeight}, "fast");
+    }
+
+    $(function () {
+        $("form").on('submit', function (e) {
+            e.preventDefault();
+        });
+        $( "#chat-send" ).click(function() { sendMessage(); });
+    });
+
+/*]]>*/
+</script>
+
+</body>
+</html>

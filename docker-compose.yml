@@ -1,0 +1,15 @@
+version: '2.1'
+
+networks:
+  chat:
+    driver: bridge
+
+services: 
+  demochat:
+    image: dfranssen/demo-chat
+    networks:
+      chat:
+        aliases:
+        - chat
+    ports:
+      - "8080:8080"
