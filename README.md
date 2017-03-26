@@ -1,6 +1,6 @@
 # dfp-websockets-test
 
-This is just a small demo app to test in a [Docker Flow Proxy](http://proxy.dockerflow.com) setup.
+This is just a small demo app to test websockets in a [Docker Flow Proxy](http://proxy.dockerflow.com) setup.
 
 ## Some notes:
  - application image is built from this source and is available on docker hub: docker.io/dfranssen/test-websocket
