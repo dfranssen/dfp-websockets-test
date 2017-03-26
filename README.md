@@ -16,5 +16,5 @@ This is just a small demo app to test in a [Docker Flow Proxy](http://proxy.dock
  - open chrome browser at http://127.0.0.1.xip.io and proceed (ignore self signed certificate warning)
    (Safari will not allow self-signed certificates, use letsencrypt instead)
  - click on 'Chat as...' in top menu. Open a subsequent browser session and click on 'Chat as...' (or change the browser url if your name doesn't fit :smiley: )
- - Note the different *[Routed by host xxx]* for the different messages
+ - Note the different *[Routed by host xxx]* for the different users
  - keep on chatting :wink:
