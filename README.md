@@ -16,5 +16,5 @@ This is just a small demo app to test websockets in a [Docker Flow Proxy](http:/
  - open chrome browser at http://127.0.0.1.xip.io and proceed (ignore self signed certificate warning)
    (Safari will not allow self-signed certificates, use letsencrypt instead)
  - click on 'Chat as...' in top menu. Open a subsequent browser session and click on 'Chat as...' (or change the browser url if your name doesn't fit :smiley: )
- - Note the different *[Routed by host xxx]* for the different users
+ - Note the different *[Routed by host xxx]* for the different users. (Without the broker, messages would only be exchanged when the users are served from the same host)
  - keep on chatting :wink:
