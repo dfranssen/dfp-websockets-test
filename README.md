@@ -2,13 +2,13 @@
 
 This is just a small demo app to test in a [Docker Flow Proxy](http://proxy.dockerflow.com) setup.
 
-##Some notes:
+## Some notes:
  - application image is built from this source and is available on docker hub: docker.io/dfranssen/test-websocket
  - backend application (html + websockets) is spring boot (tomcat) and is using the STOMP protocol for messaging and the sockjs library
  - websockets have been configured to us an ActiveMQ broker
  - stickiness for websockets doesn't seem to be needed due to broker setup
 
-##In order to test:
+## In order to test:
  - `docker network create --driver overlay proxy`
  - `docker stack deploy -c docker-compose-stack.yml proxy`
  - generate and inject certificates into proxy as described at http://proxy.dockerflow.com/certs/#adding-certificates-through-http-requests
